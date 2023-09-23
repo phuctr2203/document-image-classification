@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Classification</title>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+                body {
+            background-image: url('static/Images/backgroud-sky.jpg'); /* Replace with the path to your image */
+            background-size: cover; /* Ensure the image covers the entire background */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            color: white; /* Text color on top of the image */
+        }
+
+        .custom-navbar {
+            background-image: url('static/Images/backgroud-sky.jpg'); /* Replace with the path to your image */
+            background-size: cover; /* Ensure the image covers the entire background */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            color: white; /* Text color on top of the image */
+        }
+
+        .custom-navbar .navbar-nav .nav-link {
+            color: white;
+        }
+
+        .custom-navbar .navbar-brand {
+            color: white !important;
+        }
+
+        .custom-navbar .navbar-nav .nav-link:hover {
+        color: #FFA500;
+    }
+
+    #image-container {
+        display: none;
+    }
+
+    #image-container table {
+        margin-left: auto;
+        margin-right: auto;
+        
+    }
+
+    #image-container .btn-link,
+    #image-container h5 {
+        color: white !important;
+    }
+
+    #image-container img {
+        display: block;
+        margin: 0 auto;
+    }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+        <a class="navbar-brand" href="index">Team LostD</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="model">Model</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="text">Text Augmentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="rotate">Rotation Augmentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="color">Color Augmentation</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+    <div class="container mt-5">
+        <div class="row">
+            <h1 class="text-center" style="margin-bottom: 100px; width: 100%;">Document Image Classification Model</h1>
+            <div class="col-md-6" style="margin-top: 10px">
+                
+                <!-- Left Column for Text -->
+                <h3>Description</h3><br>
+                <p class="text-justify"> 
+                    Our project addresses document image classification challenges for organizations with limited datasets. We developed an advanced augmentation technique that balances datasets and enhances model training by integrating text, color, and rotation augmentation.
+                </p>
+    
+                <div id="additional-content" style="display: none;">
+                    <p class="text-justify">
+                        We aim to accelerate the performance of machine learning models, boosting document analysis accuracy. This augmentation method streamlines document processing, saves time, reduces errors, and advances document image classification and Computer Vision research.
+                    </p>
+                </div>
+    
+                <a href="#" id="read-more-link">Read More</a>
+            </div>
+    
+            <div class="col-md-6">
+                <!-- Right Column for Image -->
+                <iframe src="https://giphy.com/embed/W3aIJfChMztg0cWhtd" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center" style="margin-top: 150px;">Test our function</h1>
+                <form id="upload-form" class="mt-4">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="file-input" accept=".pdf" required style="width: 100%;">
+                        <label class="custom-file-label" for="file-input">Choose a PDF file</label>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-outline-success">Upload & Classify</button>
+                    </div>
+                </form>
+                <div id="result" class="mt-4 text-center"></div>
+                <div id="pdf-container" class="mt-4 d-none">
+                    <iframe id="pdf-frame" style="width: 100%; height: 500px;"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <footer class="bg-dark text-light text-center py-4" style="margin-top: 500px;">
+
+        </footer>
+    </div>
+
+    <!-- Add Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        const fileInput = document.getElementById('file-input');
+        const resultDiv = document.getElementById('result');
+        const pdfContainer = document.getElementById('pdf-container');
+        const pdfFrame = document.getElementById('pdf-frame');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('data', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/inference', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log(result);
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success" role="alert">
+                            Classification Result: ${result.result}
+                        </div>
+                        <div class="alert alert-info" role="alert">
+                            Processing Time: ${result.processing_time.toFixed(2)} seconds
+                        </div>`;
+                    
+                    // Display the PDF
+                    pdfFrame.src = URL.createObjectURL(fileInput.files[0]);
+                    pdfContainer.classList.remove('d-none');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            Error occurred during classification.
+                        </div>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        An error occurred.
+                    </div>`;
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            const fileName = fileInput.files[0] ? fileInput.files[0].name : 'Choose a PDF file';
+            document.querySelector('.custom-file-label').textContent = fileName;
+        });
+
+        const readMoreLink = document.getElementById('read-more-link');
+        const additionalContent = document.getElementById('additional-content');
+
+        // Add a click event listener to the link
+        readMoreLink.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent the link from scrolling
+
+            // Toggle the visibility of the additional content
+            if (additionalContent.style.display === 'none' || additionalContent.style.display === '') {
+                additionalContent.style.display = 'block';
+                readMoreLink.textContent = 'Read Less';
+            } else {
+                additionalContent.style.display = 'none';
+                readMoreLink.textContent = 'Read More';
+            }
+        });
+    </script>
+</body>
+</html>

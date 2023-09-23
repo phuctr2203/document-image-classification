@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Augmentation</title>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .modal {
+            max-width: 100%;
+        }
+
+        .modal-dialog {
+            max-width: 45%;
+        }
+
+        .table td {
+            border-right: 1px solid #ddd; /* Vertical line color */
+        }
+
+        /* Remove right border from the last cell in each row */
+        .table tr td:last-child {
+            border-right: none;
+        }
+
+        body {
+            background-image: url('static/Images/backgroud-sky.jpg'); /* Replace with the path to your image */
+            background-size: cover; /* Ensure the image covers the entire background */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            color: white; /* Text color on top of the image */
+        }
+
+        .custom-navbar {
+            background-image: url('static/Images/backgroud-sky.jpg'); /* Replace with the path to your image */
+            background-size: cover; /* Ensure the image covers the entire background */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            color: white; /* Text color on top of the image */
+        }
+
+        .custom-navbar .navbar-nav .nav-link {
+            color: white;
+        }
+
+        .custom-navbar .navbar-brand {
+            color: white !important;
+        }
+
+        .custom-navbar .navbar-nav .nav-link:hover {
+        color: #FFA500;
+    }
+
+    #image-container {
+        display: none;
+    }
+
+    #image-container table {
+        margin-left: auto;
+        margin-right: auto;
+        
+    }
+
+    #image-container .btn-link,
+    #image-container h5 {
+        color: white !important;
+    }
+
+    #image-container img {
+        display: block;
+        margin: 0 auto;
+    }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+        <a class="navbar-brand" href="index">Team LostD</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="model">Model</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="text">Text Augmentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="rotate">Rotation Augmentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="color">Color Augmentation</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- Main Function -->
+        <!-- Main Function -->
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col">
+                    <h1 class="text-center">Text Augmentation</h1>
+                    <!-- Add the short description here -->
+                    <div class="container mt-5">
+                        <div class="row">
+                            <div class="col-md-6" style="margin-top: 10px">
+                                <!-- Left Column for Text -->
+                                <h3>Description</h3><br>
+                                <p class="text-justify"> 
+                                    We develop a new text augmentation technique to enhance the performance of the LayoutLMv3 pretraining model. The swapping of bounding boxes in this technique is not executed in a random manner, but rather deliberately based on the comprehensive semantic context of the text contained within the bounding box.
+                                </p>
+                    
+                                <div id="additional-content" style="display: none;">
+                                    <p class="text-justify">
+                                        The methodology employed in this study utilizes the EasyOCR model for the purpose of optical character recognition (OCR) and the OpenCV library for image processing. The objective of this technique is to ascertain a bounding box that possesses a size that can be compared to others.
+                                    </p>
+                    
+                                    <p class="text-justify">
+                                        Once two bounding boxes that demonstrate similarity have been identified, a swapping process will be initiated, leading to the creation of augmented images. The aforementioned approach aims to overcome several constraints of the random swapping technique by ensuring that the exchanged bounding boxes in each document image maintain a predetermined amount of text content and consistently fit within the target documents.
+                                    </p>
+                                </div>
+                    
+                                <a href="#" id="read-more-link">Read More</a>
+                            </div>
+                    
+                            <div class="col-md-6">
+                                <!-- Right Column for Image -->
+                                <iframe src="static/Text_result/Text.gif" width="480" height="480" frameBorder="0" allowFullScreen></iframe>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h1 class="text-center" style="margin-top: 150px;">Our process</h1>
+                            </div>
+                            <div class="col-md-12">
+                                <!-- Full width column for image -->
+                                <img src="static/Images/Text Augmentation Flowchart.png" alt="Image" class="img-fluid" style="margin-top: 50px;">
+                            </div>
+                        </div>
+                    </div>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center" style="margin-top: 100px;">Test our function</h1>
+                <form id="augmentation-form" class="mt-4" enctype="multipart/form-data">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="file-input1" accept=".pdf" name="files" required>
+                        <label class="custom-file-label" for="file-input1">Choose the first PDF file</label>
+                    </div>
+                    <div class="custom-file mt-3">
+                        <input type="file" class="custom-file-input" id="file-input2" accept=".pdf" name="files" required>
+                        <label class="custom-file-label" for="file-input2">Choose the second PDF file</label>
+                    </div>                    
+                    <div class="text-center mt-3">
+                        <div class="spinner-border text-primary" role="status" style="display: none;">
+                            <span class="sr-only" style="margin-top: 100px;">Loading...</span>
+                        </div>
+                        <div id="loading-message" style="display: none;">Applying Augmentation...</div>
+                        <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic outlined example">
+                            <button type="submit" class="btn btn-outline-success">Apply Augmentation</button>
+                            <button id="apply-augmentation" type="button" class="btn btn-outline-danger">Show Result</button>
+                    </div>
+                </form>
+
+                <div id="image-container" class="mt-5 text-center" style="display: none;">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><h5>Original Image 1</h5></td>
+                                <td><h5>Original Image 2</h5></td>
+                            </tr>
+                            <tr>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#original1Modal"><img class="img-fluid" src="static/Text_result/original_1.jpg" alt="Original Image 1"></button></td>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#original2Modal"><img class="img-fluid" src="static/Text_result/original_2.jpg" alt="Original Image 2"></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><h5>CutMix Result 1</h5></td>
+                                <td><h5>CutMix Result 2</h5></td>
+                            </tr>
+                            <tr>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#cutmix1Modal"><img class="img-fluid" src="static/Text_result/cutmix_1.jpg" alt="CutMix Image 1"></button></td>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#cutmix2Modal"><img class="img-fluid" src="static/Text_result/cutmix_2.jpg" alt="CutMix Image 2"></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><h5>Augmented Result 1</h5></td>
+                                <td><h5>Augmented Result 2</h5></td>
+                            </tr>
+                            <tr>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#augmented1Modal"><img class="img-fluid" src="static/Text_result/result_1.jpg" alt="Augmented Image 1"></button></td>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#augmented2Modal"><img class="img-fluid" src="static/Text_result/result_2.jpg" alt="Augmented Image 2"></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal fade" id="original1Modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Text_result/original_1.jpg" alt="Original Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="original2Modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Text_result/original_2.jpg" alt="Original Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Create a modal for the second augmented image -->
+                <div class="modal fade" id="augmented1Modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Text_result/result_1.jpg" alt="Augmented Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Create a modal for the third augmented image -->
+                <div class="modal fade" id="augmented2Modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Text_result/result_2.jpg" alt="Augmented Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="cutmix1Modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Text_result/cutmix_1.jpg" alt="CutMix Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>                                     
+                <div class="modal fade" id="cutmix2Modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Text_result/cutmix_2.jpg" alt="CutMix Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>        
+            </div>
+        </div>
+
+        
+
+    </div>
+
+    <footer class="bg-dark text-light text-center py-4" style="margin-top: 300px;">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2023 Your Website Name</p>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><a href="#">Home</a></li>
+                        <li class="list-inline-item"><a href="#">About Us</a></li>
+                        <li class="list-inline-item"><a href="#">Services</a></li>
+                        <li class="list-inline-item"><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        const form = document.getElementById('augmentation-form');
+        const fileInput1 = document.getElementById('file-input1');
+        const fileInput2 = document.getElementById('file-input2');
+        const applyButton = document.getElementById('apply-button');
+        const loadingSpinner = document.querySelector('.spinner-border');
+        const loadingMessage = document.getElementById('loading-message');
+        const augmentationImageContainer = document.getElementById('image-container');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Disable the Apply button and hide the augmentation image container
+            augmentationImageContainer.style.display = 'none';
+            loadingSpinner.style.display = 'inline-block';
+            loadingMessage.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('files', fileInput1.files[0]);
+            formData.append('files', fileInput2.files[0]);
+
+            try {
+                const response = await fetch('/text-augmentation', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert('Text augmentation failed.');
+                    }
+                } else {
+                    console.error('Error:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                // Re-enable the Apply button and show the augmentation image container
+                applyButton.disabled = false;
+                loadingSpinner.style.display = 'none';
+                loadingMessage.style.display = 'none';
+                augmentationImageContainer.style.display = 'block';
+            }
+        });
+
+        fileInput1.addEventListener('change', () => {
+            const fileName = fileInput1.files[0] ? fileInput1.files[0].name : 'Choose the first PDF file';
+            document.querySelector('.custom-file-label[for="file-input1"]').textContent = fileName;
+        });
+
+        fileInput2.addEventListener('change', () => {
+            const fileName = fileInput2.files[0] ? fileInput2.files[0].name : 'Choose the second PDF file';
+            document.querySelector('.custom-file-label[for="file-input2"]').textContent = fileName;
+        });
+
+        const applyAugmentationButton = document.getElementById('apply-augmentation');
+
+        applyAugmentationButton.addEventListener('click', () => {
+            if (augmentationImageContainer.style.display === 'none' || augmentationImageContainer.style.display === '') {
+                augmentationImageContainer.style.display = 'block';
+            } else {
+                augmentationImageContainer.style.display = 'none';
+            }
+        });
+
+        const readMoreLink = document.getElementById('read-more-link');
+        const additionalContent = document.getElementById('additional-content');
+
+                // Add a click event listener to the link
+        readMoreLink.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent the link from scrolling
+
+            // Toggle the visibility of the additional content
+            if (additionalContent.style.display === 'none' || additionalContent.style.display === '') {
+                additionalContent.style.display = 'block';
+                readMoreLink.textContent = 'Read Less';
+            } else {
+                additionalContent.style.display = 'none';
+                readMoreLink.textContent = 'Read More';
+            }
+        });
+
+    </script>
+</body>
+</html>

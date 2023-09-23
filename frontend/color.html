@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Classification</title>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .modal {
+            max-width: 100%;
+        }
+
+        .modal-dialog {
+            max-width: 45%;
+        }
+
+        .table td {
+            border-right: 1px solid #ddd; /* Vertical line color */
+        }
+
+        /* Remove right border from the last cell in each row */
+        .table tr td:last-child {
+            border-right: none;
+        }
+
+        body {
+            background-image: url('static/Images/backgroud-sky.jpg'); /* Replace with the path to your image */
+            background-size: cover; /* Ensure the image covers the entire background */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            color: white; /* Text color on top of the image */
+        }
+
+        .custom-navbar {
+            background-image: url('static/Images/backgroud-sky.jpg'); /* Replace with the path to your image */
+            background-size: cover; /* Ensure the image covers the entire background */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            color: white; /* Text color on top of the image */
+        }
+
+        .custom-navbar .navbar-nav .nav-link {
+            color: white;
+        }
+
+        .custom-navbar .navbar-brand {
+            color: white !important;
+        }
+
+        .custom-navbar .navbar-nav .nav-link:hover {
+        color: #FFA500; /* Change to your desired hover color */
+    }
+
+    #image-container {
+        display: none;
+    }
+
+    #image-container table {
+        margin-left: auto;
+        margin-right: auto;
+        
+    }
+
+    #image-container .btn-link,
+    #image-container h5 {
+        color: white !important;
+    }
+
+    #image-container img {
+        display: block;
+        margin: 0 auto;
+    }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+        <a class="navbar-brand" href="index">Team LostD</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="model">Model</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="text">Text Augmentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="rotate">Rotation Augmentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="color">Color Augmentation</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+       <!-- Main Function -->
+       <div class="container mt-5">
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center">Image Color Augmentation</h1>
+
+                <div class="container mt-5">
+                    
+                    <div class="row">
+                        <div class="col-md-6" style="margin-top: 10px">
+                            <!-- Left Column for Text -->
+                            <h3>Description</h3><br>
+                            <p class="text-justify">
+                                This color augmentation technique functions as a form of color detection. It identifies and analyzes all hues present in a document, extracting pixel values using the OpenCV library. 
+                            </p>
+                
+                            <div id="additional-content" style="display: none;">
+                                <p class="text-justify">
+                                    During this analysis, it excludes white, typically representing the background, and black, which signifies textual components. This careful examination reveals visual distortions in certain words.
+                                </p>
+                
+                                <p class="text-justify">
+                                    While current color augmentation techniques are well-suited for processing images, they may not be ideal for documents. For instance, one common technique involves increasing contrast, but when applied to documents, it can render text and content unreadable.
+                                </p>
+                                <p class="text-justify">
+                                    Therefore, we have developed an enhanced version of this technique. Instead of altering all pixels indiscriminately, we selectively replace pixels that are not black (RGB: 0, 0, 0) or white (RGB: 255, 255, 255). This approach ensures that the text remains legible within the document.
+                                </p>
+                            </div>
+                
+                            <a href="#" id="read-more-link">Read More</a>
+                        </div>
+                
+                        <div class="col-md-6">
+                            <!-- Right Column for Image -->
+                            <iframe src="static/Color_result/Color.gif" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+                        </div>
+
+                    </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="text-center" style="margin-top: 100px;">Our process</h1>
+                    </div>
+                    <div class="col-md-12">
+                        <!-- Full width column for image -->
+                        <img src="static/Images/Color Augmentation Flowchart.png" alt="Image" class="img-fluid" style="margin-top: 50px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <h3 class="text-center" style="margin-top: 100px;">Test our function</h3>
+            </div>
+
+                <form id="augmentation-form" class="mt-4">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="file-input" accept=".pdf" required>
+                        <label class="custom-file-label" for="file-input">Choose a PDF file</label>
+                    </div>
+                    <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic outlined example">
+                        <button type="submit" class="btn btn-outline-success">Apply Augmentation</button>
+                        <button id="apply-augmentation" class="btn btn-outline-danger">Show Result</button>
+                    </div>
+                </form>
+
+                <div id="image-container" class="mt-5 text-center" style="display: none;">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <td><h5>Original</h5></td>
+                                <td><h5>Existing Technique</h5></td>
+                            </tr>
+                            <tr>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#originalModal"><img class="img-fluid" src="static/Color_result/original.jpg" alt="Original Image"></button></td>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#colorTechniqueModal"><img class="img-fluid" src="static/Color_result/basic.jpg" alt="Augmented Image"></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <td><h5>Augmented Result 1</h5></td>
+                                <td><h5>Augmented Result 2</h5></td>
+                                <td><h5>Augmented Result 3</h5></td>
+                            </tr>
+                            <tr>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#augmentedModal"><img class="img-fluid" src="static/Color_result/result_1.jpg" alt="Augmented Image"></button></td>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#augmented2Modal"><img class="img-fluid" src="static/Color_result/result_2.jpg" alt="Augmented Image"></button></td>
+                                <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#augmented3Modal"><img class="img-fluid" src="static/Color_result/result_3.jpg" alt="Augmented Image"></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal fade" id="originalModal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Color_result/original.jpg" alt="Original Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="augmentedModal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Color_result/result_1.jpg" alt="Augmented Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Create a modal for the second augmented image -->
+                <div class="modal fade" id="augmented2Modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Color_result/result_2.jpg" alt="Augmented Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Create a modal for the third augmented image -->
+                <div class="modal fade" id="augmented3Modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Color_result/result_3.jpg" alt="Augmented Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal fade" id="colorTechniqueModal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <img class="img-fluid" src="static/Color_result/basic.jpg" alt="Augmented Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="bg-dark text-light text-center py-4" style="margin-top: 500px;">
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>&copy; 2023 Your Website Name</p>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-inline">
+                            <li class="list-inline-item"><a href="#">Home</a></li>
+                            <li class="list-inline-item"><a href="#">About Us</a></li>
+                            <li class="list-inline-item"><a href="#">Services</a></li>
+                            <li class="list-inline-item"><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Add Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        const form = document.getElementById('augmentation-form');
+        const fileInput = document.getElementById('file-input');
+        const augmentationImage = document.getElementById('augmentation-image');
+        const augmentationImageContainer = document.getElementById('image-container');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('data', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/color-augmentation', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert('Color augmentation failed. There are only black and white colors.');
+                    }
+                } else {
+                    console.error('Error:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            const fileName = fileInput.files[0] ? fileInput.files[0].name : 'Choose a PDF file';
+            document.querySelector('.custom-file-label').textContent = fileName;
+        });
+
+
+        const applyAugmentationButton = document.getElementById('apply-augmentation');
+        const imageContainer = document.getElementById('image-container');
+
+        applyAugmentationButton.addEventListener('click', () => {
+            // Toggle the display property (show or hide the image container)
+            if (imageContainer.style.display === 'none' || imageContainer.style.display === '') {
+                imageContainer.style.display = 'block';
+            } else {
+                imageContainer.style.display = 'none';
+            }
+        });
+
+        const readMoreLink = document.getElementById('read-more-link');
+        const additionalContent = document.getElementById('additional-content');
+
+        readMoreLink.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent the link from scrolling
+
+            // Toggle the visibility of the additional content
+            if (additionalContent.style.display === 'none' || additionalContent.style.display === '') {
+                additionalContent.style.display = 'block';
+                readMoreLink.textContent = 'Read Less';
+            } else {
+                additionalContent.style.display = 'none';
+                readMoreLink.textContent = 'Read More';
+            }
+        });
+    </script>
+</body>
+</html>
